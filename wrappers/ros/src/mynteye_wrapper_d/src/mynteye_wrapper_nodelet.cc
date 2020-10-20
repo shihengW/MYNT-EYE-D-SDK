@@ -37,6 +37,7 @@
 
 #include <mynteye_wrapper_d/Temp.h> // NOLINT
 
+#include "mynteyed/device/types.h"
 #include "mynteyed/camera.h"
 #include "mynteyed/utils.h"
 
@@ -97,7 +98,8 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
   ros::Publisher pub_imu;
   ros::Publisher pub_temp;
   ros::Publisher pub_imu_processed;
-  ros::Publisher pub_mesh_;  // < The publisher for camera mesh.
+  // swei: Disable mesh.
+  // ros::Publisher pub_mesh_;  // < The publisher for camera mesh.
 
   visualization_msgs::Marker mesh_msg_;  // < Mesh message.
   ros::ServiceServer get_params_service_;
@@ -313,6 +315,8 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
       NODELET_INFO_STREAM(dashes);
     }
 
+    // swei: Disable mesh.
+    /*
     pub_mesh_ = nh.advertise<visualization_msgs::Marker>("camera_mesh", 0 );
     // where to get the mesh from
     std::string mesh_file;
@@ -322,7 +326,8 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
       NODELET_INFO_STREAM("no mesh found for visualisation, set ros param mesh_file, if desired");
       mesh_msg_.mesh_resource = "";
     }
-
+    */
+    
     const std::string DEVICE_PARAMS_SERVICE = "get_params";
     get_params_service_ = nh_ns.advertiseService(
         DEVICE_PARAMS_SERVICE, &MYNTEYEWrapperNodelet::getParams, this);
@@ -379,7 +384,8 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
     // loop
     ros::Rate loop_rate(framerate);
     while (nh_ns.ok()) {
-      publishMesh();
+      // swei: Disable for now for simplicity.
+      // publishMesh();
       detectSubscribers();
       loop_rate.sleep();
     }
@@ -542,9 +548,9 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
     } else {
       NODELET_WARN_STREAM("Camera info is null, use default parameters.");
     }
-    left_info_ptr = createCameraInfo(in.left);
-    right_info_ptr = createCameraInfo(in.right);
-    depth_info_ptr = createCameraInfo(in.left);
+    left_info_ptr = createCameraInfo(in.left, params.color_mode);
+    right_info_ptr = createCameraInfo(in.right, params.color_mode);
+    depth_info_ptr = createCameraInfo(in.left, params.color_mode);
 
     // motion intrinsics
     bool motion_ok;
@@ -880,7 +886,7 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
     return msg;
   }
 
-  sensor_msgs::CameraInfoPtr createCameraInfo(const CameraIntrinsics& in) {
+  sensor_msgs::CameraInfoPtr createCameraInfo(const CameraIntrinsics& in, ColorMode color_mode) {
     // http://docs.ros.org/kinetic/api/sensor_msgs/html/msg/CameraInfo.html
     sensor_msgs::CameraInfo *camera_info = new sensor_msgs::CameraInfo();
     auto camera_info_ptr = sensor_msgs::CameraInfoPtr(camera_info);
@@ -909,9 +915,16 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
 
     camera_info->distortion_model = "plumb_bob";
 
-    // D of plumb_bob: (k1, k2, t1, t2, k3)
-    for (int i = 0; i < 5; i++) {
-      camera_info->D.push_back(in.coeffs[i]);
+    // Distortion.
+    // swei: Do not pub actual distortion parameters if the image is already rectified.
+    if (color_mode == ColorMode::COLOR_RECTIFIED) {
+        for (int i = 0; i < 5; i++)
+            camera_info->D.push_back(0.0);
+    }
+    else {
+        // D of plumb_bob: (k1, k2, t1, t2, k3)
+        for (int i = 0; i < 5; i++)
+            camera_info->D.push_back(in.coeffs[i]);
     }
 
     // R to identity matrix
@@ -1065,6 +1078,8 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
     return res;
   }
 
+  // swei: Disable mesh.
+  #if 0
   void publishMesh() {
     mesh_msg_.header.frame_id = temp_frame_id;
     mesh_msg_.header.stamp = ros::Time::now();
@@ -1101,6 +1116,7 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
     if (!mesh_msg_.mesh_resource.empty())
       pub_mesh_.publish(mesh_msg_);  // publish stamped mesh
   }
+  #endif
 
   bool getParams(
       mynteye_wrapper_d::GetParams::Request &req,     // NOLINT

@@ -41,8 +41,11 @@
     device_all:   left_color ✓ right_color ? depth ✓
   Note: ✓: available, x: unavailable, ?: depends on #stream_mode
   -->
+  <!-- swei: MUST BE ALL here, or the camera info won't pub. -->
   <arg name="dev_mode" default="$(arg device_all)" />
-
+  
+  <!-- swei: If rectified, will not see distortion parameters 
+             in camera info. -->
   <arg name="color_mode" default="$(arg color_raw)" />
   <!-- Note: must set DEPTH_RAW to get raw depth values for points -->
   <arg name="depth_mode" default="$(arg depth_raw)" />
@@ -56,7 +59,7 @@
   <!-- Auto-white balance -->
   <arg name="state_awb" default="true" />
   <!-- IR intensity -->
-  <arg name="ir_intensity" default="4" />
+  <arg name="ir_intensity" default="0" />
   <!-- IR Depth Only -->
   <arg name="ir_depth_only" default="false" />
 
@@ -104,7 +107,8 @@
   <arg name="pi/2" value="1.5707963267948966" />
   <arg name="optical_rotate" value="0 0 0 -$(arg pi/2) 0 -$(arg pi/2)" />
 
-  <node pkg="tf" type="static_transform_publisher" name="b2l_m_broadcaster"
+  <!-- swei: Disabled -->
+  <!-- <node pkg="tf" type="static_transform_publisher" name="b2l_m_broadcaster"
       args="$(arg optical_rotate) $(arg base_frame) $(arg left_mono_frame) 100" />
   <node pkg="tf" type="static_transform_publisher" name="b2l_c_broadcaster"
       args="$(arg optical_rotate) $(arg base_frame) $(arg left_color_frame) 100" />
@@ -124,7 +128,7 @@
   <node pkg="tf" type="static_transform_publisher" name="b2temp_broadcaster"
       args="0 0 0 $(arg pi/2) 0 $(arg pi) $(arg base_frame) $(arg temp_frame) 50" />
   <node pkg="tf" type="static_transform_publisher" name="b2imu_processed_broadcaster"
-      args="0 0 0 $(arg pi/2) 0 $(arg pi) $(arg base_frame) $(arg imu_frame_processed) 50" />
+      args="0 0 0 $(arg pi/2) 0 $(arg pi) $(arg base_frame) $(arg imu_frame_processed) 50" /> -->
   
   <arg name="mesh_file" default="D-0315.obj" />
 
