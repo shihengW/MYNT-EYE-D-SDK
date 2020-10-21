@@ -1172,6 +1172,13 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
                   in_vga.right.p[9],in_vga.right.p[10],in_vga.right.p[11]})}  // NOLINT
             }}
           };
+
+          // swei: No distortion parameters needed if already rectified.
+          if (params.color_mode == ColorMode::COLOR_RECTIFIED) {
+            intrinsics["left"]["coeffs"] = Config::array({0.0, 0.0, 0.0, 0.0, 0.0});
+            intrinsics["right"]["coeffs"] = Config::array({0.0, 0.0, 0.0, 0.0, 0.0});
+          }
+
           std::string json = dump_string(intrinsics, JSON);
           res.value = json;
         } else if (params.stream_mode == StreamMode::STREAM_2560x720 &&
@@ -1217,6 +1224,13 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
                   in_hd.right.p[9],in_hd.right.p[10],in_hd.right.p[11]})}  // NOLINT
             }}
           };
+
+          // swei: No distortion parameters needed if already rectified.
+          if (params.color_mode == ColorMode::COLOR_RECTIFIED) {
+            intrinsics["left"]["coeffs"] = Config::array({0.0, 0.0, 0.0, 0.0, 0.0});
+            intrinsics["right"]["coeffs"] = Config::array({0.0, 0.0, 0.0, 0.0, 0.0});
+          }
+
           std::string json = dump_string(intrinsics, JSON);
           res.value = json;
         } else {

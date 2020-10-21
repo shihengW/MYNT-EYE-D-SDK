@@ -45,8 +45,8 @@
   <arg name="dev_mode" default="$(arg device_all)" />
   
   <!-- swei: If rectified, will not see distortion parameters 
-             in camera info. -->
-  <arg name="color_mode" default="$(arg color_raw)" />
+             in camera_info or get_params service. -->
+  <arg name="color_mode" default="$(arg color_rectified)" />
   <!-- Note: must set DEPTH_RAW to get raw depth values for points -->
   <arg name="depth_mode" default="$(arg depth_raw)" />
   <arg name="stream_mode" default="$(arg stream_1280x480)" />
