@@ -471,6 +471,9 @@ class MYNTEYEWrapperNodelet : public nodelet::Nodelet {
         bool sub_result_right_depth = sub_result.depth;
         pthread_mutex_unlock(&mutex_sub_result);
 
+        // swei: This is weird. I found that only when an image topic is
+        // listend, will there be a real img_info. Otherwise, callback
+        // hit but no img_info returned.
         auto timestamp = data.img_info
           ? checkUpTimeStamp(data.img_info->timestamp, data.img->type())
           : compatibleTimestamp(data.img->frame_id());

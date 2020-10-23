@@ -46,7 +46,7 @@
   
   <!-- swei: If rectified, will not see distortion parameters 
              in camera_info or get_params service. -->
-  <arg name="color_mode" default="$(arg color_rectified)" />
+  <arg name="color_mode" default="$(arg color_raw)" />
   <!-- Note: must set DEPTH_RAW to get raw depth values for points -->
   <arg name="depth_mode" default="$(arg depth_raw)" />
   <arg name="stream_mode" default="$(arg stream_1280x480)" />
@@ -55,11 +55,11 @@
   <arg name="depth_type" default="$(arg type_mono16)" />
 
   <!-- Auto-exposure -->
-  <arg name="state_ae" default="true" />
+  <arg name="state_ae" default="false" />
   <!-- Auto-white balance -->
-  <arg name="state_awb" default="true" />
+  <arg name="state_awb" default="false" />
   <!-- IR intensity -->
-  <arg name="ir_intensity" default="0" />
+  <arg name="ir_intensity" default="4" />
   <!-- IR Depth Only -->
   <arg name="ir_depth_only" default="false" />
 
