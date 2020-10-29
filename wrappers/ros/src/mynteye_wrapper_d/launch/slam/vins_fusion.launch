@@ -181,7 +181,7 @@
     <param name="imu_processed_topic"         value="$(arg imu_processed_topic)" />
 
     <param name="mesh_file" value="$(arg mesh_file)" />
-    <param name="ros_output_framerate"     value="2" />
+    <param name="ros_output_framerate"     value="-1" />
   </node>
 
   <!-- disable compressed depth plugin for image topics -->
